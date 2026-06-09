@@ -1,2 +1,2 @@
-# Digital-Forensic
+# Digital Forensic
 Digital Forensic Notes
