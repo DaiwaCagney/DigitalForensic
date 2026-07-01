@@ -3,7 +3,7 @@
 ## Outlook
 - `C:\Users\%USERNAME%\Documents\Outlook Files` --> .pst file
 - `C:\Users\%USERNAME%\AppData\Local\Microsoft\Outlook` --> .ost file
-Kernel for OST to PST
+- Kernel for OST to PST
 
 ## Message ID
 - before @ --> timestamp associated
