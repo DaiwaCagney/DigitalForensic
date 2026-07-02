@@ -9,6 +9,10 @@
 - before @ --> timestamp associated
 - after @ --> fully qualified domain name
 
+## SPF
+- Hardfail --> v=spf1 ip4 : 207.84.200.37 -all
+- Softfail --> v=spf1 include:modprod.outlook.com ~all
+
 ## Checking Email Authenticity
 - Email Dossier
 - `https://hunter.io/email-verifier`
@@ -19,9 +23,13 @@
 
 ## IP Address
 - Whois CQ Counter
-- `https://www.arin.net/`
 
-## Tools
-- Systools Eml Viewer
-- Recover My Email
-- Recovery Toolbox for Outlook
+## Origin of emails
+- `https://www.arin.net/`
+- `https://afrinic.net`
+- `https://www.apnic.net`
+- `https://www.ripe.net`
+- `https://www.lacnic.net`
+
+## Web-based Email
+- Email Header Tracer `https://www.ip2location.com`
