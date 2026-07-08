@@ -1,26 +1,22 @@
 # Data Acquisition
 
-## E01 image file works perfectly only when the forensics workstation is Windows-based
-`xmount --in ewf Windows_Evidence_001.E01 /home/jason/Documents`
+## Windows
 
-## Mounting image files on a Linux forensic workstation
-Mount a dd image file using mount command
-
-Mount a dd image file using a loop device
+### Volatile Data
+- Belkasoft Live RAM Capturer
 
 ```
-mkdir /mnt/dd
-mount -o ro /home/jason/Documents/Windows_Evidence_001.dd /mnt/dd/ # in read-only mode
-ls -la /mnt/dd/
+wmic diskdrive list brief /format:list #DeviceID=\\.\PHYSICALDRIVE0
+net use Z: "\\server2022\chfi-tools"
+.\dd.exe if=\\.\physicaldrive0 of=z:\evidence\Windows_001.dd bs=512k --size --progress
+Get-Filehash 'z:\evidence\Windows_001.dd' -Algorithm md5 | format-list
 ```
 
-`losetup -f` --> identify the first unused loop device
+## Linux
 
-`losetup /dev/loop14 MAC_Evidence_001.dd`
+### Acquire RAM
+`dd if=/dev/fmem of=<file_name.dd> bs=1MB` --> In older versions of Linux, RAM contents were captured from the /dev/mem device
 
-images may contain hidden files and folders. To view them, press `Ctrl+H` on the keyboard
-
-## Acquire RAM
 `dd if=/dev/fmem of=/home/james/ubuntu_local_ram.dd bs=1MB` --> To acquire RAM locally
 
 `insmod lime-6.2.0-35-generic.ko "path=../../ubuntu_local_ram.mem format=lime"` --> To acquire RAM locally
@@ -29,11 +25,12 @@ The kernel module version varies depending on the Ubuntu OS version installed on
 
 ### Remote acquisition of RAM using dd and netcat
 ```
+nc -l <port> > filename.dd
+dd if=/dev/fmem bs=1024 | nc <IP Address of the Suspect Machine> <port>
 nc -l 1234 > ubuntu_remote_ram.dd
 dd if=/dev/fmem bs=1024 | nc 10.10.1.9 1234
 ```
 
-## Linux
 ### dd
 ```
 dd if=/dev/sda of=./diskimage.img # Create an image of a disk
@@ -66,13 +63,25 @@ insmod lime-<kernel_module>.ko "path=tcp:<port> format=lime"
 nc <IP Address of the suspect machine>:<port> > filename.mem
 ```
 
-## Windows
+### Mounting image files on a Linux forensic workstation
+Mount a dd image file using mount command
+
+Mount a dd image file using a loop device
+
 ```
-wmic diskdrive list brief /format:list #DeviceID=\\.\PHYSICALDRIVE0
-net use Z: "\\server2022\chfi-tools"
-.\dd.exe if=\\.\physicaldrive0 of=z:\evidence\Windows_001.dd bs=512k --size --progress
-Get-Filehash 'z:\evidence\Windows_001.dd' -Algorithm md5 | format-list
+mkdir /mnt/dd
+mount -o ro /home/jason/Documents/Windows_Evidence_001.dd /mnt/dd/ # in read-only mode
+ls -la /mnt/dd/
 ```
+
+`losetup -f` --> identify the first unused loop device
+
+`losetup /dev/loop14 MAC_Evidence_001.dd`
+
+images may contain hidden files and folders. To view them, press `Ctrl+H` on the keyboard
+
+## E01 image file works perfectly only when the forensics workstation is Windows-based
+`xmount --in ewf Windows_Evidence_001.E01 /home/jason/Documents`
 
 ### Check if VM exist in a host:
 Check HKEY_CLASSES_ROOT for file extension
