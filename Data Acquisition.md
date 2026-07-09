@@ -15,6 +15,19 @@ Get-Filehash 'z:\evidence\Windows_001.dd' -Algorithm md5 | format-list
 ### Non-Volatile Data
 - FTK® Imager
 
+### Identifying RAID Drives in Windows System
+- Device Manager
+- Expand the Disk drives, Storage controllers, and Other devices options, and check for listed RAID device drivers
+- `Diskpart` --> open the command line disk partitioning utility
+- `lis dis` --> list all disks connected to the Windows system
+- `sel dis <disk number>` --> select the disk for operating
+- `det dis` --> display details of the selected disk
+
+### Examining Images on Windows Forensic Workstation
+- Autopsy
+- FTK Imager
+- Volatility
+
 ## Linux
 
 ### Acquire RAM
@@ -57,6 +70,7 @@ dd if=/dev/fmem of=/home /sam /mem.bin bs=1024 --> Copy RAMmemory to a file
 - `dcfldd if=/dev/sda split=10M of=/media/image.dd` --> split the output image into multiple segments
 - `dcfldd if=/dev/sda split=100M of=/media/image.dd hash=sha256 hashlog=/media/sha256.txt`
 - `dcfldd if=/dev/sda hash=sha256,sha512 hashwindow=3G sha256log=sha256_hashes.txt sha512log=sha512_hashes.txt \ hashconv=after bs=8k conv=noerror,sync split=3G splitformat=aa of=sda_image.dd`
+- `dcfldd if=/dev/sda vf=image.dd`
 
 ### LiME
 ```
@@ -75,19 +89,55 @@ mount -o ro /home/jason/Documents/Windows_Evidence_001.dd /mnt/dd/ # in read-onl
 ls -la /mnt/dd/
 ```
 
-- `losetup -f` --> identify the first unused loop device
-- `losetup /dev/loop14 MAC_Evidence_001.dd`
-- images may contain hidden files and folders. To view them, press `Ctrl+H` on the keyboard
+```
+`losetup -f` --> identify the unused loopback device
+`losetup /dev/loop14 MAC_Evidence_001.dd`
+images may contain hidden files and folders. To view them, press `Ctrl+H` on the keyboard
+```
 
-## E01 image file works perfectly only when the forensics workstation is Windows-based
-`xmount --in ewf Windows_Evidence_001.E01 /home/jason/Documents`
+### Converting E01 Image File to dd Image File
+- `xmount --in [input_image_format] [file_name.E01] [mount_directory]`
+- `xmount --in ewf Windows_Evidence_001.E01 /home/jason/Documents`
 
-## Enable Write Protection on the Evidence Media
+### Converting E01 Image File to Raw Image File
+- `ewfmount [file_name.E01] [mount_directory]`
+- `ewfmount Windows Evidence 001.E01 /mnt/ewfmount/`
+- `mount [raw_image_filename] [mount_directory] –o ro, loop,show_sys_files,streams_interface=windows`
+- `mount ewf1 /mount/ -o ro,loop,show_sys_files,streams_interface=windows`
+
+### Converting dd Image File to VHDX File
+- `qemu-img convert –f <file format> <Source_Image_filename> –O vhdx <destination_filename.vhdx>`
+- `qemu-img convert -f raw Evidence.dd -O vhdx Evidence.vhdx`
+
+### Examining a dd Image File
+- `fdisk -l <file_name>` --> list information such as sector size, start sector, and type of evidence file
+- `mount –t ntfs –o ro,offset=[value_in_bytes] [dd_image_file_name] [mount_directory]`
+- `umount [mount_directory]`
+
+### Examining Physical Hard Disk
+- `lshw` --> view the attached hard disk and file system
+- `lsblk` -->  lists information about all blocked devices
+- `mount –t ntfs-3g –o ro [partition_number] [mount_directory]` -->  Mount the Windows file system on Linux
+- `mount -t ntfs-3g -o ro /dev/sdb2 /media/windows/`
+
+### Examining Mac APFS Image File
+- `losetup –f` --> identify the unused loopback device
+- `losetup –r /dev/loop[number] [evidence.dd]` --> mount the APFS image file to the unused loopback device
+- `mount /dev/loop[number] /mnt/apfs` or `apfs-fuse /dev/loop[number] /mnt/apfs`
+
+### Enable Write Protection on the Evidence Media
 - `mount -o ro <Path of the device>` --> The “ro” flag allows read-only access to the storage media
 
-## Identifying RAID Drives in Linux system
+### Identifying RAID Drives in Linux System
 - `lspci | grep RAID` --> check whether RAID is configured
 - `cat /etc/mdadm.conf` --> obtain essential information about active RAID devices
 - `cat /proc/mdstat` --> check the current status of RAID devices
 - `mdadm --detail /dev/md125` --> examine the details of the RAID device
 - `mdadm --examine /dev/sdd3` --> obtain information regarding a specific device component
+
+## Access the drive at the BIOS level to copy data in the Host Protected Area (HPA)
+- UFED Ultimate
+- IM Solo-4 PLUS IT Enterprise
+
+## Digital Forensic Imaging Tools 
+- OSFClone
