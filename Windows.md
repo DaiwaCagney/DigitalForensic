@@ -446,3 +446,7 @@
 ## Wireless Network Report
 - `netsh wlan show wlanreport`
 - `C:\ProgramData\Microsoft\Windows\WlanReport\wlan-report-latest.html`
+
+## Check if VM exist in a host:
+- Check HKEY_CLASSES_ROOT for file extension
+- Check network adapters
