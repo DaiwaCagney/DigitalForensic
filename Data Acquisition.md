@@ -15,10 +15,10 @@ Get-Filehash 'z:\evidence\Windows_001.dd' -Algorithm md5 | format-list
 ## Linux
 
 ### Acquire RAM
-`dd if=/dev/fmem of=<file_name.dd> bs=1MB` --> In older versions of Linux, RAM contents were captured from the /dev/mem device  
-`dd if=/dev/fmem of=/home/james/ubuntu_local_ram.dd bs=1MB` --> To acquire RAM locally  
-`insmod lime-6.2.0-35-generic.ko "path=../../ubuntu_local_ram.mem format=lime"` --> To acquire RAM locally  
-The kernel module version varies depending on the Ubuntu OS version installed on the suspect machine. In this case, it is 6.2.0-35-generic  
+- `dd if=/dev/fmem of=<file_name.dd> bs=1MB` --> In older versions of Linux, RAM contents were captured from the /dev/mem device
+- `dd if=/dev/fmem of=/home/james/ubuntu_local_ram.dd bs=1MB` --> To acquire RAM locally
+- `insmod lime-6.2.0-35-generic.ko "path=../../ubuntu_local_ram.mem format=lime"` --> To acquire RAM locally
+- The kernel module version varies depending on the Ubuntu OS version installed on the suspect machine. In this case, it is 6.2.0-35-generic
 
 ### Remote acquisition of RAM using dd and netcat
 ```
@@ -54,9 +54,8 @@ nc <IP Address of the suspect machine>:<port> > filename.mem
 ```
 
 ### Mounting image files on a Linux forensic workstation
-Mount a dd image file using mount command
-
-Mount a dd image file using a loop device
+- Mount a dd image file using mount command
+- Mount a dd image file using a loop device
 
 ```
 mkdir /mnt/dd
@@ -64,11 +63,9 @@ mount -o ro /home/jason/Documents/Windows_Evidence_001.dd /mnt/dd/ # in read-onl
 ls -la /mnt/dd/
 ```
 
-`losetup -f` --> identify the first unused loop device
-
-`losetup /dev/loop14 MAC_Evidence_001.dd`
-
-images may contain hidden files and folders. To view them, press `Ctrl+H` on the keyboard
+- `losetup -f` --> identify the first unused loop device
+- `losetup /dev/loop14 MAC_Evidence_001.dd`
+- images may contain hidden files and folders. To view them, press `Ctrl+H` on the keyboard
 
 ## E01 image file works perfectly only when the forensics workstation is Windows-based
 `xmount --in ewf Windows_Evidence_001.E01 /home/jason/Documents`
