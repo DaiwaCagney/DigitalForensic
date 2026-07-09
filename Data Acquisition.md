@@ -49,13 +49,6 @@ dd if=/home/sam/partition.image of=/dev/sdb2 bs=4096 conv=notrunc,noerror --> re
 ### dcfldd
 `dcfldd if=/dev/sda split=100M of=/media/image.dd hash=sha256 hashlog=/media/sha256.txt`
 
-### Acquire Volatile Data
-```
-dd if=/dev/fmem of=<file_name.dd> bs=1MB --> Local
-nc -l <port> > filename.dd
-dd if=/dev/fmem bs=1024 | nc <IP Address> <port>
-```
-
 ### LiME
 ```
 insmod lime-<kernel_module>.ko "path=<directory> format=lime" --> Local
@@ -82,8 +75,3 @@ images may contain hidden files and folders. To view them, press `Ctrl+H` on the
 
 ## E01 image file works perfectly only when the forensics workstation is Windows-based
 `xmount --in ewf Windows_Evidence_001.E01 /home/jason/Documents`
-
-### Check if VM exist in a host:
-Check HKEY_CLASSES_ROOT for file extension
-
-Check network adapters
