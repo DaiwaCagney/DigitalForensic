@@ -89,6 +89,7 @@
 - StegSpy
 - OpenStego
 - DeepSound
+- zsteg
 
 ## Metadata:
 - EXIFtool
