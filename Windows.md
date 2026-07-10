@@ -84,6 +84,7 @@
 
 ## File Systems
 - `dir /o:d` --> time and date of OS installation (in system32)
+- `%TEMP%`
 
 ## ESE Database File
 - Windows.edb: Stores index information (for Windows search) about Windows OS (located at C:\ProgramData\Microsoft\Search\Da ta\Applications\Windows)
@@ -208,6 +209,7 @@
 - DCode
 - `HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation` --> time zone settings, ActiveTimeBias
 - `SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\Profiles\{GUID}` --> connected wireless Service Set IDentifiers (SSIDs)
+- `HKLM\Software\WOW6432Node\Microsoft\Windows\CurrrentVersion\Uninstall` --> enumerate this key to detect applications installed on the system
 - RegRipper
 
 ## Capture and Examine Windows registry files on Live system
@@ -218,6 +220,8 @@
 - msconfig
 - Autoruns
 - Autorunsc
+- `shell:startup`
+- `shell:common startup`
 
 ## Volume Shadow Copy Services
 - Volume Shadow-Copy Service (VSS) examination EnScript
