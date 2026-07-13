@@ -35,6 +35,7 @@
 - Protective MBR occupies the first position of the GPT at LBA 0
 - LBA 1 contains the GPT header, and the GPT header comprises a pointer to the partition table or partition entry array at LBA 2
 - LBA 34 is the first usable sector
+- `Get-ForensicMasterBootRecord -Path \\.\PHYSICALDRIVE0 | select -ExpandProperty PartitionTable` --> displays the MBR partition table of a GPT-formatted disk
 
 ## Windows File Systems
 - File Allocation Table (FAT)
