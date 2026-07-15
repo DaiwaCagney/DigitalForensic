@@ -57,6 +57,7 @@
 13. The Service Control Manager starts explorer.exe and initiates the Desktop Window Manager (DMW) process, which initializes the desktop for the user
 
 - Identifying the MBR Partition --> Computer Management --> Storage --> Disk Management --> Select Partition Properties --> Volumes --> Partition Style
+- `Get-MBR -Path \\.\PHYSICALDRIVE0`
 
 ## Windows Boot Process: UEFI-GPT
 1. Security phase --> SEC phase of EFI consists of an initialization code that the system executes after powering on the EFI system. It manages platform reset events and sets the system so that it can find, validate, install, and run the pre-EFI initialization (PEI)
@@ -65,6 +66,10 @@
 4. Boot device selection phase --> the boot device selection (BDS) interprets the boot configuration data and selects the boot policy for later implementation. This phase works with the DXE to check if the device drivers require signature verification. In this phase, the system loads the MBR boot code into memory for a legacy BIOS boot or loads the bootloader program from the EFI partition for a UEFI boot. It also provides an option for the user to choose the EFI shell or a UEFI application as the boot device from the setup
 5. Runtime phase --> At this point, the system clears the UEFI program from memory and transfers it to the OS. During the UEFI BIOS update, the OS calls the runtime service using a small part of the memory
 
+- `Get-ForensicGuidPartitionTable -Path \\.\PHYSICALDRIVE0` --> get GUID Partition Table
+- `Get-ForensicBootSector` --> analyzes the hard drive's first sector and determines if the disk is formatted using the MBR or GPT partitioning scheme then parses the GPT
+- `Get-ForensicPartitionTable` --> determines the type of boot sector (MBR or GPT) and returns the correct partition object (PartitionEntry or GuidPartitionTableEntry)
+
 ## Windows File Systems
 - File Allocation Table (FAT)
 - FAT12
@@ -72,14 +77,6 @@
 - FAT32
 - extended file allocation table (exFAT)
 - Resilient File System (ReFS)
-
-`Get-ForensicGuidPartitionTable -Path \\.\PHYSICALDRIVE0` --> get GUID Partition Table
-
-`Get-MBR`
-
-`Get-ForensicBootSector` --> analyzes the hard drive's first sector and determines if the disk is formatted using the MBR or GPT partitioning scheme then parses the GPT
-
-`Get-ForensicPartitionTable` --> determines the type of boot sector (MBR or GPT) and returns the correct partition object (PartitionEntry or GuidPartitionTableEntry)
 
 ### diskpart
 ```
