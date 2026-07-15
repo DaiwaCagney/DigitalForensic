@@ -133,19 +133,24 @@ detail partition
 - extended file allocation table (exFAT)
 - Resilient File System (ReFS)
 
+### New Technology File System (NTFS)
+- Ntldlr.dll --> boot loader, it accesses the NTFS filesystem and loads the contents of the boot.ini file
+- Ntfs.sys --> computer system file driver for NTFS
 
+#### NTFS Master File Table (MFT)
+- Each file on an NTFS volume is represented by a record in a special file called the master file table (MFT)
+- The MFT size increases with an increase in the number of files added to the NTFS volume
+- The first record of this table describes the MFT itself, followed by an MFT mirror file, a log file, and system files
+- When the user deletes a file from an NTFS volume, the file system marks the values in the MFT as free and makes that location reusable
+- NTFS saves space for the MFT to maintain it as compactly as possible as it expands
+- For the MFT in each volume, NTFS reserves some space called the MFT zone
 
-## New Technology File System (NTFS)
-### Alternate Data Streams (ADS)
-`ECHO [data] > [filename]:[streamname]` --> write contents into a file’s data stream
-
-`MORE < [filename]:[streamname]` --> displays the content of the data stream
-
-`fsutil` --> check USN Journal
-
-`notepad test.txt:hidden.txt`
-
-`dir /r`
+#### Alternate Data Streams (ADS)
+- `ECHO [data] > [filename]:[streamname]` --> write contents into a file’s data stream
+- `MORE < [filename]:[streamname]` --> displays the content of the data stream
+- `fsutil` --> check USN Journal
+- `notepad test.txt:hidden.txt`
+- `dir /r`
 
 ## Linux File Systems
 Filesystem Hierarchy Standard (FHS)
