@@ -41,7 +41,7 @@
 - Power on self-test (POST) --> ensures that all the hardware components are working fine
 - Warm booting --> it does not perform POST
 
-## Windows Boot Process: BIOS-MBR Method
+### Windows Boot Process: BIOS-MBR Method
 1. When the user switches the system ON, the CPU sends a Power Good signal to the motherboard and checks for the computer’s BIOS firmware
 2. BIOS starts POST, which checks if all the hardware required for system boot is available and loads all the firmware settings from non-volatile memory onto the motherboard
 3. If POST is successful, add-on adapters perform a self-test for integration with the system
@@ -59,16 +59,71 @@
 - Identifying the MBR Partition --> Computer Management --> Storage --> Disk Management --> Select Partition Properties --> Volumes --> Partition Style
 - `Get-MBR -Path \\.\PHYSICALDRIVE0`
 
-## Windows Boot Process: UEFI-GPT
-1. Security phase --> SEC phase of EFI consists of an initialization code that the system executes after powering on the EFI system. It manages platform reset events and sets the system so that it can find, validate, install, and run the pre-EFI initialization (PEI)
-2. Pre-EFI initialization phase --> The PEI phase initializes the CPU, main memory, and boot firmware volume (BFV). It locates and executes the pre-initialization modules (PEIMs) present in the BFV so as to initialize all the hardware found in the system. Finally, it creates a handoff block list (HOBL) with all the found resources and interface descriptors and passes it to the next phase, i.e., the DXE phase
-3. Driver execution environment phase --> Most of the initialization occurs in this phase. By using the HOBL, the driver execution environment (DXE) initializes the entire physical memory of the system, I/O, and memory-mapped I/O (MIMO) resources and finally begins dispatching DXE drivers present in the system firmware volumes (given in the HOBL). The DXE core produces a set of EFI boot services and EFI runtime services. The EFI boot services allocate memory and load executable images. The EFI runtime services convert memory addresses from physical to virtual, hand them over to the kernel, and reset the CPU for code running within the EFI environment or the OS kernel, once the CPU takes control of the system
-4. Boot device selection phase --> the boot device selection (BDS) interprets the boot configuration data and selects the boot policy for later implementation. This phase works with the DXE to check if the device drivers require signature verification. In this phase, the system loads the MBR boot code into memory for a legacy BIOS boot or loads the bootloader program from the EFI partition for a UEFI boot. It also provides an option for the user to choose the EFI shell or a UEFI application as the boot device from the setup
-5. Runtime phase --> At this point, the system clears the UEFI program from memory and transfers it to the OS. During the UEFI BIOS update, the OS calls the runtime service using a small part of the memory
+### Windows Boot Process: UEFI-GPT
+1. Security phase
+  - SEC phase of EFI consists of an initialization code that the system executes after powering on the EFI system
+  - It manages platform reset events and sets the system so that it can find, validate, install, and run the pre-EFI initialization (PEI)
+2. Pre-EFI initialization phase
+  - The PEI phase initializes the CPU, main memory, and boot firmware volume (BFV)
+  - It locates and executes the pre-initialization modules (PEIMs) present in the BFV so as to initialize all the hardware found in the system
+  - Finally, it creates a handoff block list (HOBL) with all the found resources and interface descriptors and passes it to the next phase
+3. Driver execution environment phase
+  - Most of the initialization occurs in this phase
+  - By using the HOBL, the driver execution environment (DXE) initializes the entire physical memory of the system, I/O, and memory-mapped I/O (MIMO) resources
+  - and finally begins dispatching DXE drivers present in the system firmware volumes (given in the HOBL)
+  - The DXE core produces a set of EFI boot services and EFI runtime services
+  - The EFI boot services allocate memory and load executable images
+  - The EFI runtime services convert memory addresses from physical to virtual, hand them over to the kernel
+  - and reset the CPU for code running within the EFI environment or the OS kernel, once the CPU takes control of the system
+4. Boot device selection phase
+  - the boot device selection (BDS) interprets the boot configuration data and selects the boot policy for later implementation
+  - This phase works with the DXE to check if the device drivers require signature verification
+  - In this phase, the system loads the MBR boot code into memory for a legacy BIOS boot or loads the bootloader program from the EFI partition for a UEFI boot
+  - It also provides an option for the user to choose the EFI shell or a UEFI application as the boot device from the setup
+5. Runtime phase
+  - At this point, the system clears the UEFI program from memory and transfers it to the OS. During the UEFI BIOS update, the OS calls the runtime service using a small part of the memory
 
 - `Get-ForensicGuidPartitionTable -Path \\.\PHYSICALDRIVE0` --> get GUID Partition Table
 - `Get-ForensicBootSector` --> analyzes the hard drive's first sector and determines if the disk is formatted using the MBR or GPT partitioning scheme then parses the GPT
+- `Get-ForensicBootSector -Path \\.\PHYSICALDRIVE0 | select *` --> run against a disk formatted using the MBR partitioning scheme
 - `Get-ForensicPartitionTable` --> determines the type of boot sector (MBR or GPT) and returns the correct partition object (PartitionEntry or GuidPartitionTableEntry)
+
+### Linux Boot Process
+1. BIOS stage
+  - It initializes the system hardware during the booting process
+  - The BIOS retrieves the information stored in the complementary metal–oxide semiconductor (CMOS) chip, which is a battery-operated memory chip on the motherboard that contains information about the system’s hardware configuration
+  - During the boot process, the BIOS performs a POST to ensure that all the hardware components of the system are operational
+  - After a successful POST, the BIOS starts searching for the drive or disk that contains the OS in a standard sequence
+  - If the first listed device is not available or not working, then it checks for the next one, and so on
+  - A drive is bootable only if it has the MBR in its first sector known as the boot sector
+  - The system’s hard disk acts as the primary boot disk, and the optical drive works as the secondary boot disk for booting the OS in case the primary boot disk fails
+2. Bootloader stage
+  - The bootloader stage includes the task of loading the Linux kernel and optional initial RAM disk
+  - The kernel enables the CPU to access RAM and the disk
+  - The second pre-cursor software is an image of a temporary virtual file system called the initrd image or initial RAMdisk
+  - Now, the system prepares to deploy the actual root file system
+  - It then detects the device that contains the file system and loads the necessary modules
+  - The last step of the bootloader stage is to load the kernel into memory
+3. Kernel Stage
+  - Once the control shifts from the bootloader stage to the kernel stage, the virtual root file system created by the initrd image executes the Linuxrc program
+  - This program generates the real file system for the kernel and later removes the initrd image
+  - The kernel then searches for new hardware and loads any suitable device drivers found
+  - Subsequently, it mounts the actual root file system and performs the init process
+  - The init reads the file “/etc/inittab” and uses this file to load the rest of the system daemons
+  - This prepares the system, and the user can log in and start using it
+  - Typical bootloaders for Linux are Linux Loader (LILO) and Grand Unified Bootloader (GRUB)
+  - These bootloaders allow the user to select which OS kernel to load during boot time
+
+## Analyzing the GPT Header
+
+### Windows - DiskPart
+```
+diskpart
+select disk <disk number>
+detail disk
+select partition=1
+detail partition
+```
 
 ## Windows File Systems
 - File Allocation Table (FAT)
@@ -78,14 +133,7 @@
 - extended file allocation table (exFAT)
 - Resilient File System (ReFS)
 
-### diskpart
-```
-diskpart
-select disk <disk number>
-detail disk
-select partition=1
-detail partition
-```
+
 
 ## New Technology File System (NTFS)
 ### Alternate Data Streams (ADS)
