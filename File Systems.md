@@ -148,25 +148,63 @@ detail partition
 #### Alternate Data Streams (ADS)
 - `ECHO [data] > [filename]:[streamname]` --> write contents into a file’s data stream
 - `MORE < [filename]:[streamname]` --> displays the content of the data stream
-- `fsutil` --> check USN Journal
 - `notepad test.txt:hidden.txt`
 - `dir /r`
 
+#### NTFS Journals
+- changes are written into a data structure before they are implemented in the file system
+- The journaling feature in NTFS enables faster recovery without any data loss in case of a system crash or an unexpected shutdown
+- It has a system management feature such as USN (Update Sequence Number Journal) to record the changes to the files and directories in the volume in `$Extend\$UsnJrnl`
+- The `$UsnJrnl` consists of two data streams:
+  - `$UsnJrnl/$J` --> records the actual journal entries of file and folder changes that occurred on the volume
+  - `$UsnJrnl/$MAX` --> records the metadata of $UsnJrnl
+- If the size of the USN Journal/Change file exceeds the predefined limit, the journal rotates, and the previous data will be overwritten
+- `fsutil` --> check USN Journal
+- NTFS Journal Viewer
+- FTK Imager
+
 ## Linux File Systems
-Filesystem Hierarchy Standard (FHS)
+- Filesystem Hierarchy Standard (FHS)
 
 - Second Extended File System (ext2)
+  - `/sbin/tune2fs -j <partition-name> ` --> to convert ext2 to ext3
+  - `/sbin/tune2fs -j /dev/hda5` --> convert an ext2 file system located on the partition /dev/hda5 to an ext3 file system
 - Third Extended File System (ext3)
 - Fourth Extended File System (ext4)
 
-`fsck`
+- `fsck` --> file system maintenance utilities
 
-`/sbin/tune2fs -j /dev/hda5` --> convert an ext2 file system located on the partition /dev/hda5 to an ext3 file system
-
-`dumpe2fs <path-to-partition> | grep –i superblock` --> view superblock information of a file system
-
-`ls -il` --> view the assigned inode numbers of files or directories
+### Superblocks, Inodes, and Data Blocks
+- Superblocks --> stores information regarding the characteristics of a file system such as, the type and size of file, empty or filled file system blocks, locations of inode tables and their sizes, block size of the file system, etc
+- `dumpe2fs <path-to-partition> | grep –i superblock` --> view superblock information of a file system
+- Inodes --> stores metadata pertaining to a file or directory on the Linux filesystem and it is identified by a unique inode number or index number
+- `ls -il` --> view the assigned inode numbers of files or directories
+- Data Blocks --> stores the actual contents of a file
+- a data block can also store the contents of an entire directory
 
 ## macOS File Systems
 - Hierarchical File System Plus (HFS+)
 - Apple File System (APFS)
+
+## MACB Timestamps
+- Modified
+- Accessed
+- Changed ($MFT modified)
+- Birth (file creation time)
+
+## Host-Protected Areas (HPA)
+- reserved area on an HDD or SSD that is not accessible to the OS
+- stores data that users, BIOS, or the OS of a system cannot modify, change, or access
+- store information about HDD utilities, diagnostic tools, system restore, encryption keys, boot sector code, etc
+- three ATA commands that can help users create and use an HPA
+  - IDENTIFY DEVICE
+  - SET MAX ADDRESS
+  - READ NATIVE MAX ADDRESS
+
+## Device Configuration Overlays (DCO)
+- additional hidden area available on modern hard disks
+- enables system vendors to buy HDDs of varying sizes from different manufactures and configure all of them to have an equal number of sectors
+- help users enable/disable features on an HDD
+- DEVICE_CONFIGURATION_IDENTIFY --> command to determine the actual size and features of a disk
+- EnCase
+- TAFT
