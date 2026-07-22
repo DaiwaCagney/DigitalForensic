@@ -54,6 +54,16 @@
 - Mysqlbinlog --> To display the content of bin logs (mysql-bin.nnnnnn) in text format 
 - mysqldbexport --> To export metadata, data, or both from one or more databases
 
+### InnoDB Storage Engine
+- default storage engine in MySQL version >= 5.5.5
+- `Ibdata1 file` --> The default system tablespace data file
+- `[tablename].ibd` --> Contains the data and index of the table
+
+### MyISAM
+- default storage engine in MySQL version < 5.5.5
+- `[tablename].myd` --> Contains the table data
+- `[tablename].myi` --> Contains the table indexes
+
 ## MySQL Forensics
 1. Examine the error log files
 2. Examine the General Query log file
@@ -75,3 +85,5 @@
   - `show columns in wp_posts;`
 9. Dump all data related
   - `select * from wp_posts where post_author = '123' into outfile 'E:\evidence.txt';`
+10. Collection of all logs and the database folder --> Binary logs allow to trace all events
+11. Analyze the binary logs with a hex editor
