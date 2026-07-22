@@ -43,3 +43,35 @@
 8. View the Modified Record --> `dbcc trace (3604) dbcc page(moviescope,1,154,1)` --> view the data page 154, scroll down to slot no. 4 (data row no. 4)
 9. Identify the Data Type
 10. Compare the Row Logs --> `dbcc log(moviescope, 3)` --> Note down the hex values of RowLog Contents 0 and RowLog Contents 1
+
+## MySQL
+- Information_Schema table --> database metadata
+- `SELECT CONCAT(table_schema, table_name) as 'table name_table rows' FROM information_schema.tables WHERE table_rows > 10 AND table_schema not in ('information_schema','mysql','performance_schema');` --> tables more than 10 rows
+- Mysqldump --> To dump single or multiple databases for backup purpose
+- Mysqlaccess --> To check the access privileges defined for a hostname or username
+- myisamlog --> To process the MyISAM log file and perform recovery operation, display version information, etc
+- Myisamchk --> To obtain the status of the MyISAM table, identify the corrupted tables, repair the corrupted tables, etc
+- Mysqlbinlog --> To display the content of bin logs (mysql-bin.nnnnnn) in text format 
+- mysqldbexport --> To export metadata, data, or both from one or more databases
+
+## MySQL Forensics
+1. Examine the error log files
+2. Examine the General Query log file
+3. Create a backup of the database --> `mysqldump -u root -p wordpress > wordpress_evidence.sql`
+4. create a database in the forensic examiner’s machine and dump the contents of the previously taken backup
+  - `mysql -u root -p` --> Log in to mysql server
+  - `create database wordpress;` --> Create a database with the same name
+  - `\q` --> Exit the mysql terminal
+  - `mysql -u root -p wordpress < C:/wordpress_evidence.sql` --> Copy all contents of the dump file to the newly created database
+5. Select Database
+  - `show databases;`
+  - `use wordpress;`
+6. View Tables in the Database
+  - `show tables;`
+7. View Users in the Database
+  - `select * from wp_users;`
+  - Make a note of the user ID
+8. View Columns in the Table
+  - `show columns in wp_posts;`
+9. Dump all data related
+  - `select * from wp_posts where post_author = '123' into outfile 'E:\evidence.txt';`
